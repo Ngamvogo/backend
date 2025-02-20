@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { handlePdfUpload } = require('../controllers/pdfController');
+const { uploadPDFController } = require('../controllers/pdfController');
 
-// Route pour télécharger un fichier PDF
-router.post('/upload', multer().single('file'), handlePdfUpload);
+const upload = multer({ dest: 'uploads/' });
+
+router.post('/upload', upload.single('file'), uploadPDFController);
 
 module.exports = router;

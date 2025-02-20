@@ -1,24 +1,20 @@
-const pdfParse = require('pdf-parse');
+const { uploadPDF } = require('../services/pdfService');
 
-// Fonction pour analyser un fichier PDF téléchargé
-const handlePdfUpload = (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('Aucun fichier téléchargé');
-  }
+const uploadPDFController = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: "Aucun fichier envoyé." });
+        }
 
-  const pdfBuffer = req.file.buffer;
+        console.log("✅ Fichier reçu :", req.file); // Debugging
 
-  pdfParse(pdfBuffer).then((data) => {
-    // Le texte extrait du PDF
-    const text = data.text;
-    console.log(text);
-    res.status(200).send({
-      message: 'PDF analysé avec succès',
-      extractedText: text, // Retourne le texte extrait
-    });
-  }).catch((err) => {
-    res.status(500).send('Erreur lors de l\'analyse du PDF');
-  });
+        const result = await uploadPDF(req.file);
+        res.json(result);
+    } catch (error) {
+        console.error("❌ Erreur backend :", error.message);
+        res.status(500).json({ error: error.message });
+    }
 };
 
-module.exports = { handlePdfUpload };
+
+module.exports = { uploadPDFController };
